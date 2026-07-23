@@ -9,11 +9,12 @@ import SwiftUI
 
 struct HeaderView: View {
 
+    @State var title: String = "Explore"
     var body: some View {
 
         HStack {
 
-            Text("Explore")
+            Text(title)
                 .font(.largeTitle)
                 .fontWeight(.bold)
 

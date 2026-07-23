@@ -12,6 +12,7 @@ struct GithubExplorerApp: App {
     var body: some Scene {
         WindowGroup {
             ExploreView()
+                .preferredColorScheme(.dark)
         }
     }
 }
