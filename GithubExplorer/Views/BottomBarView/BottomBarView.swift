@@ -9,7 +9,7 @@ import SwiftUI
 
 struct BottomTabBar: View {
 
-    @Binding var selectedTab: Int
+    @Binding var selectedTab: Tab
 
     var body: some View {
 
@@ -18,15 +18,15 @@ struct BottomTabBar: View {
             tabButton(
                 image: "magnifyingglass",
                 title: "Explore",
-                index: 0
+                index: .explore
             )
 
             Spacer()
 
             tabButton(
                 image: "star",
-                title: "Saved",
-                index: 1
+                title: "Starred",
+                index: .starred
             )
 
             Spacer()
@@ -34,7 +34,7 @@ struct BottomTabBar: View {
             tabButton(
                 image: "face.smiling",
                 title: "Profile",
-                index: 2
+                index: .profile
             )
         }
         .padding(.horizontal, 30)
@@ -45,7 +45,7 @@ struct BottomTabBar: View {
     @ViewBuilder
     private func tabButton(image: String,
                            title: String,
-                           index: Int) -> some View {
+                           index: Tab) -> some View {
 
         Button {
 

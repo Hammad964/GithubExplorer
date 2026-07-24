@@ -10,8 +10,7 @@ import SwiftUI
 struct ExploreView: View {
 
     @StateObject private var vm = ExploreViewModel()
-    @State private var selectedTab = 0
-
+ 
     var body: some View {
 
         VStack(spacing: 0) {
@@ -45,8 +44,6 @@ struct ExploreView: View {
                 }
                 .padding()
             }
-
-            BottomTabBar(selectedTab: $selectedTab)
         }
         .background(Color.black)
     }

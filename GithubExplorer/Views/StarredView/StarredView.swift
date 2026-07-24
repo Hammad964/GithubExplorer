@@ -10,12 +10,11 @@ import SwiftUI
 struct StarredView: View {
     
     @StateObject private var vm = ExploreViewModel()
-    @State private var selectedTab = 1
 
     var body: some View {
         VStack(spacing: 0) {
 
-            HeaderView(title: "SAVED")
+            HeaderView(title: "Starred")
 
             Divider()
 
@@ -37,8 +36,6 @@ struct StarredView: View {
                 }
                 .padding()
             }
-
-            BottomTabBar(selectedTab: $selectedTab)
         }
         .background(Color.black)
     }
