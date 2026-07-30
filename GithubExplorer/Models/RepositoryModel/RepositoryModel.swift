@@ -8,11 +8,12 @@
 import Foundation
 import SwiftUI
 
-struct Repository: Identifiable {
+struct RepositoryModel: Identifiable {
 
     let id = UUID()
 
     let name: String
+    let owner: String
     let description: String
 
     let language: String
@@ -20,4 +21,8 @@ struct Repository: Identifiable {
 
     let stars: String
     let forks: String
+    
+    let issues: String
+    let contributors: [String]
+    var starred: Bool = false
 }

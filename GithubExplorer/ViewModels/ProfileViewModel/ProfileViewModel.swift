@@ -20,23 +20,29 @@ class ProfileViewModel: ObservableObject {
         following: 28
     )
 
-    @Published var repositories: [Repository] = [
-        Repository(
+    @Published var repositories: [RepositoryModel] = [
+        RepositoryModel(
             name: "hammad964/MyPortfolio",
+            owner: "gin-gonic",
             description: "Personal portfolio site rebuilt as a custom single-page site with Formspree contact integration.",
             language: "TypeScript",
             languageColor: .blue,
             stars: "6",
-            forks: "1"
+            forks: "1",
+            issues: "56",
+            contributors: ["appleboy", "javierprovecho", "thinkerou"]
         ),
 
-        Repository(
+        RepositoryModel(
             name: "hammad964/ExpenseTrackerSwiftUI",
+            owner: "gin-gonic",
             description: "SwiftUI + SwiftData expense tracker with category breakdown charts and CloudKit sync.",
             language: "Swift",
             languageColor: .red,
             stars: "3",
-            forks: "0"
+            forks: "0",
+            issues: "56",
+            contributors: ["appleboy", "javierprovecho", "thinkerou"]
         )
     ]
 }

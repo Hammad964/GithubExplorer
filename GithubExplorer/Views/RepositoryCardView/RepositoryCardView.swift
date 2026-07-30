@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RepositoryCard: View {
 
-    let repo: Repository
+    let repo: RepositoryModel
 
     var body: some View {
 
