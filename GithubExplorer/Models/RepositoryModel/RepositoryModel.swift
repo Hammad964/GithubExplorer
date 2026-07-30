@@ -14,6 +14,7 @@ struct RepositoryModel: Identifiable {
 
     let name: String
     let owner: String
+    let avatarURL: String?
     let description: String
 
     let language: String

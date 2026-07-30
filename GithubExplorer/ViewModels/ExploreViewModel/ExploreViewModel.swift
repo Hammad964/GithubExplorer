@@ -8,32 +8,51 @@
 import SwiftUI
 import Combine
 
+@MainActor
 class ExploreViewModel: ObservableObject {
 
     @Published var searchText = ""
-    @Published var selectedLanguage = "All"
+    @Published var selectedLanguage = "All" {
+        didSet {
+            print("🔽 [ExploreViewModel] Language filter changed to: \(selectedLanguage)")
+        }
+    }
+    @Published var allRepositories: [RepositoryModel] = []
+    @Published var isLoading = false
+    @Published var errorMessage: String?
 
-    let languages = [
-        "All",
-        "Swift",
-        "Kotlin",
-        "TypeScript",
-        "Python",
-        "Go",
-        "Rust"
-    ]
+    let languages = ["All", "Swift", "Kotlin", "TypeScript", "Python", "Go", "Rust"]
 
-    @Published var repositories: [RepositoryModel] = [
-        RepositoryModel(
-            name: "gin-gonic/gin",
-            owner: "gin-gonic",
-            description: "Gin is a HTTP web framework written in Go.",
-            language: "Go",
-            languageColor: .cyan,
-            stars: "79,100",
-            forks: "8,000",
-            issues: "56",
-            contributors: ["appleboy", "javierprovecho", "thinkerou"]
-        )
-    ]
+    // Views should read THIS, not allRepositories
+    var repositories: [RepositoryModel] {
+        if selectedLanguage == "All" {
+            return allRepositories
+        }
+        return allRepositories.filter { $0.language == selectedLanguage }
+    }
+
+    func loadTrending() async {
+        await performSearch(query: "stars:>10000")
+    }
+
+    func search() async {
+        let trimmed = searchText.trimmingCharacters(in: .whitespaces)
+        if trimmed.isEmpty {
+            await loadTrending()
+            return
+        }
+        await performSearch(query: trimmed)
+    }
+
+    private func performSearch(query: String) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            allRepositories = try await GitHubRepository.shared.searchRepositories(query: query)
+            print("✅ [ExploreViewModel] Loaded \(allRepositories.count) repositories")
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
 }

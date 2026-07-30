@@ -13,39 +13,67 @@ struct ExploreView: View {
  
     var body: some View {
 
-        VStack(spacing: 0) {
+        NavigationStack {
+            VStack(spacing: 0) {
 
-            HeaderView()
+                HeaderView()
 
-            Divider()
+                Divider()
 
-            ScrollView(.vertical, showsIndicators: false) {
+                ScrollView(.vertical, showsIndicators: false) {
 
-                VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 20) {
 
-                    SearchBarView(text: $vm.searchText)
+                        SearchBarView(text: $vm.searchText)
+                            .onSubmit {
+                                Task { await vm.search() }
+                            }
 
-                    LanguageFilterView(
-                        selected: $vm.selectedLanguage,
-                        languages: vm.languages
-                    )
+                        LanguageFilterView(
+                            selected: $vm.selectedLanguage,
+                            languages: vm.languages
+                        )
 
-                    Text("TRENDING")
-                        .font(.headline)
-                        .foregroundColor(.gray)
+                        Text(vm.searchText.isEmpty ? "TRENDING" : "RESULTS")
+                            .font(.headline)
+                            .foregroundColor(.gray)
 
-                    LazyVStack(spacing: 18) {
+                        if vm.isLoading {
 
-                        ForEach(vm.repositories) { repo in
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 20)
 
-                            RepositoryCard(repo: repo)
+                        } else if let error = vm.errorMessage {
+
+                            Text(error)
+                                .font(.subheadline)
+                                .foregroundColor(.githubSecondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 20)
+
+                        } else {
+
+                            LazyVStack(spacing: 18) {
+
+                                ForEach(vm.repositories) { repo in
+
+                                    NavigationLink(destination: RepositoryDetailView(repo: repo)) {
+                                        RepositoryCardView(repo: repo)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
                         }
                     }
+                    .padding()
                 }
-                .padding()
+                .task {
+                    await vm.loadTrending()
+                }
             }
+            .background(Color.black)
         }
-        .background(Color.black)
     }
 }
 

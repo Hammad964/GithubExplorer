@@ -24,6 +24,7 @@ class ProfileViewModel: ObservableObject {
         RepositoryModel(
             name: "hammad964/MyPortfolio",
             owner: "gin-gonic",
+            avatarURL: "https://avatars.githubusercontent.com/u/60065998?s=60&v=4",
             description: "Personal portfolio site rebuilt as a custom single-page site with Formspree contact integration.",
             language: "TypeScript",
             languageColor: .blue,
@@ -36,6 +37,7 @@ class ProfileViewModel: ObservableObject {
         RepositoryModel(
             name: "hammad964/ExpenseTrackerSwiftUI",
             owner: "gin-gonic",
+            avatarURL: "https://avatars.githubusercontent.com/u/60065998?s=60&v=4",
             description: "SwiftUI + SwiftData expense tracker with category breakdown charts and CloudKit sync.",
             language: "Swift",
             languageColor: .red,

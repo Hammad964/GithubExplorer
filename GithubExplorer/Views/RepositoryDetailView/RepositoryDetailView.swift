@@ -75,6 +75,7 @@ struct RepositoryDetailView: View {
             repo: RepositoryModel(
                 name: "gin",
                 owner: "gin-gonic",
+                avatarURL: "https://avatars.githubusercontent.com/u/60065998?s=60&v=4",
                 description: "Gin is a HTTP web framework written in Go.",
                 language: "Go",
                 languageColor: .cyan,
