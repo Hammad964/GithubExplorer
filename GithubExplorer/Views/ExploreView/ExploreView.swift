@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ExploreView: View {
 
-    @StateObject private var vm = ExploreViewModel()
+    @ObservedObject var vm: ExploreViewModel
  
     var body: some View {
 
@@ -58,7 +58,7 @@ struct ExploreView: View {
 
                                 ForEach(vm.repositories) { repo in
 
-                                    NavigationLink(destination: RepositoryDetailView(repo: repo)) {
+                                    NavigationLink(destination: RepositoryDetailView(vm: vm, repoID: repo.id)) {
                                         RepositoryCardView(repo: repo, onToggleStar: { vm.toggleStar(id: repo.id) })
                                     }
                                     .buttonStyle(.plain)
@@ -78,5 +78,5 @@ struct ExploreView: View {
 }
 
 #Preview {
-    ExploreView()
+    ExploreView(vm: ExploreViewModel())
 }

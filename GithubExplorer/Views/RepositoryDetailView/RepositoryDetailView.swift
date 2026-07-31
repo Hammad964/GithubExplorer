@@ -8,61 +8,107 @@
 import SwiftUI
 
 struct RepositoryDetailView: View {
-    
-    @State var repo: RepositoryModel
+
+    @ObservedObject var vm: ExploreViewModel
+    let repoID: RepositoryModel.ID
+
+    @State private var contributors: [String] = []
+    @State private var isLoadingContributors = false
+
+    private var repo: RepositoryModel? {
+        vm.allRepositories.first { $0.id == repoID }
+    }
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            
-            VStack(alignment: .leading, spacing: 20) {
-                
-                RepositoryDetailHeaderView(repo: repo)
-                    .frame(maxWidth: .infinity)
-                
-                RepositoryStatsRowView(repo: repo)
-                
-                Text("DESCRIPTION")
-                    .font(.headline)
-                    .foregroundColor(.gray)
-                
-                Text(repo.description)
-                    .foregroundColor(.githubSecondary)
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.githubCard)
-                    .cornerRadius(12)
-                
-                Text("CONTRIBUTORS")
-                    .font(.headline)
-                    .foregroundColor(.gray)
-                
-                VStack(spacing: 0) {
-                    ForEach(repo.contributors, id: \.self) { name in
-                        ContributorRowView(username: name)
+
+        Group {
+            if let repo {
+
+                ScrollView(.vertical, showsIndicators: false) {
+
+                    VStack(alignment: .leading, spacing: 20) {
+
+                        RepositoryDetailHeaderView(repo: repo)
+                            .frame(maxWidth: .infinity)
+
+                        RepositoryStatsRowView(repo: repo)
+
+                        Text("DESCRIPTION")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+
+                        Text(repo.description)
+                            .foregroundColor(.githubSecondary)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.githubCard)
+                            .cornerRadius(12)
+
+                        Text("CONTRIBUTORS")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+
+                        if isLoadingContributors {
+
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+
+                        } else if contributors.isEmpty {
+
+                            Text("No contributor data available.")
+                                .font(.subheadline)
+                                .foregroundColor(.githubSecondary)
+
+                        } else {
+
+                            VStack(spacing: 0) {
+                                ForEach(contributors, id: \.self) { name in
+                                    ContributorRowView(username: name)
+                                }
+                            }
+                        }
+
+                        Button {
+                            vm.toggleStar(id: repoID)
+                        } label: {
+                            Label(
+                                repo.starred ? "Starred" : "Star this repo",
+                                systemImage: repo.starred ? "star.fill" : "star"
+                            )
+                            .font(.subheadline.bold())
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .foregroundColor(repo.starred ? .black : .githubBlue)
+                            .background(repo.starred ? Color.githubBlue : Color.clear)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.githubBlue, lineWidth: repo.starred ? 0 : 1)
+                            )
+                            .cornerRadius(12)
+                        }
+                        .padding(.top, 4)
                     }
-                }
-                
-                Button {
-                    repo.starred.toggle()
-                } label: {
-                    Label(
-                        repo.starred ? "Starred" : "Star this repo",
-                        systemImage: repo.starred ? "star.fill" : "star"
-                    )
-                    .font(.subheadline.bold())
-                    .frame(maxWidth: .infinity)
                     .padding()
-                    .foregroundColor(repo.starred ? .black : .githubBlue)
-                    .background(repo.starred ? Color.githubBlue : Color.clear)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.githubBlue, lineWidth: repo.starred ? 0 : 1)
-                    )
-                    .cornerRadius(12)
                 }
-                .padding(.top, 4)
+                .task {
+                    isLoadingContributors = true
+                    do {
+                        contributors = try await GitHubRepository.shared.fetchContributors(
+                            owner: repo.owner,
+                            repo: repo.name
+                        )
+                    } catch {
+                        contributors = []
+                    }
+                    isLoadingContributors = false
+                }
+
+            } else {
+
+                Text("Repository not found.")
+                    .foregroundColor(.githubSecondary)
             }
-            .padding()
         }
         .background(Color.githubBackground)
         .navigationBarTitleDisplayMode(.inline)
@@ -70,20 +116,8 @@ struct RepositoryDetailView: View {
 }
 
 #Preview {
-    NavigationStack {
-        RepositoryDetailView(
-            repo: RepositoryModel(
-                name: "gin",
-                owner: "gin-gonic",
-                avatarURL: "https://avatars.githubusercontent.com/u/60065998?s=60&v=4",
-                description: "Gin is a HTTP web framework written in Go.",
-                language: "Go",
-                languageColor: .cyan,
-                stars: "79,100",
-                forks: "8,000",
-                issues: "56",
-                contributors: ["appleboy", "javierprovecho", "thinkerou"]
-            )
-        )
+    let vm = ExploreViewModel()
+    return NavigationStack {
+        RepositoryDetailView(vm: vm, repoID: UUID())
     }
 }

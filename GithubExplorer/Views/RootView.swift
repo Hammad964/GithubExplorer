@@ -10,6 +10,7 @@ import SwiftUI
 struct RootView: View {
 
     @State private var selectedTab: Tab = .explore
+    @StateObject private var exploreVM = ExploreViewModel()
 
     var body: some View {
 
@@ -19,10 +20,10 @@ struct RootView: View {
                 switch selectedTab {
 
                 case .explore:
-                    ExploreView()
+                    ExploreView(vm: exploreVM)
 
                 case .starred:
-                    StarredView()
+                    StarredView(vm: exploreVM)
 
                 case .profile:
                     ProfileView()

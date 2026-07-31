@@ -27,6 +27,7 @@ class ExploreViewModel: ObservableObject {
     }
 
     func loadTrending() async {
+        guard allRepositories.isEmpty else { return }
         await performSearch(query: "stars:>10000")
     }
 
