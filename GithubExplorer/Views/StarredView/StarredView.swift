@@ -30,7 +30,7 @@ struct StarredView: View {
 
                         ForEach(vm.repositories) { repo in
 
-                            RepositoryCardView(repo: repo)
+//                            RepositoryCardView(repo: repo)
                         }
                     }
                 }

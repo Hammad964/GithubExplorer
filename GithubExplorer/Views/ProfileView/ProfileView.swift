@@ -30,7 +30,7 @@ struct ProfileView: View {
                         
                         ForEach(vm.repositories) { repo in
                             
-                            RepositoryCardView(repo: repo)
+//                            RepositoryCardView(repo: repo)
                         }
                     }
                 }

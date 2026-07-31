@@ -10,6 +10,7 @@ import SwiftUI
 struct RepositoryCardView: View {
 
     let repo: RepositoryModel
+    let onToggleStar: () -> Void
 
     var body: some View {
 
@@ -18,9 +19,7 @@ struct RepositoryCardView: View {
             AsyncImage(url: URL(string: repo.avatarURL ?? "")) { phase in
                 switch phase {
                 case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
+                    image.resizable().scaledToFill()
                 case .failure:
                     Color.gray.opacity(0.2)
                 case .empty:
@@ -33,7 +32,6 @@ struct RepositoryCardView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
 
             VStack(alignment: .leading, spacing: 4) {
-
                 Text("\(repo.owner)/\(repo.name)")
                     .font(.subheadline.bold())
                     .foregroundColor(.white)
@@ -44,13 +42,20 @@ struct RepositoryCardView: View {
                     .lineLimit(2)
 
                 HStack(spacing: 12) {
-
                     Label(repo.stars, systemImage: "star.fill")
                     Label(repo.forks, systemImage: "arrow.triangle.branch")
                 }
                 .font(.caption2)
                 .foregroundColor(.githubSecondary)
             }
+
+            Spacer()
+
+            Button(action: onToggleStar) {
+                Image(systemName: repo.starred ? "star.fill" : "star")
+                    .foregroundColor(repo.starred ? .yellow : .githubSecondary)
+            }
+            .buttonStyle(.plain)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -59,21 +64,21 @@ struct RepositoryCardView: View {
     }
 }
 
-#Preview {
-    RepositoryCardView(
-        repo: RepositoryModel(
-            name: "gin",
-            owner: "gin-gonic",
-            avatarURL: "https://avatars.githubusercontent.com/u/7894478?v=4",
-            description: "Gin is a HTTP web framework written in Go.",
-            language: "Go",
-            languageColor: .cyan,
-            stars: "79,100",
-            forks: "8,000",
-            issues: "56",
-            contributors: []
-        )
-    )
-    .padding()
-    .background(Color.githubBackground)
-}
+//#Preview {
+//    RepositoryCardView(
+//        repo: RepositoryModel(
+//            name: "gin",
+//            owner: "gin-gonic",
+//            avatarURL: "https://avatars.githubusercontent.com/u/7894478?v=4",
+//            description: "Gin is a HTTP web framework written in Go.",
+//            language: "Go",
+//            languageColor: .cyan,
+//            stars: "79,100",
+//            forks: "8,000",
+//            issues: "56",
+//            contributors: []
+//        ), onToggleStar:
+//    )
+//    .padding()
+//    .background(Color.githubBackground)
+//}

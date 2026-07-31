@@ -12,18 +12,13 @@ import Combine
 class ExploreViewModel: ObservableObject {
 
     @Published var searchText = ""
-    @Published var selectedLanguage = "All" {
-        didSet {
-            print("🔽 [ExploreViewModel] Language filter changed to: \(selectedLanguage)")
-        }
-    }
+    @Published var selectedLanguage = "All"
     @Published var allRepositories: [RepositoryModel] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
 
     let languages = ["All", "Swift", "Kotlin", "TypeScript", "Python", "Go", "Rust"]
 
-    // Views should read THIS, not allRepositories
     var repositories: [RepositoryModel] {
         if selectedLanguage == "All" {
             return allRepositories
@@ -44,12 +39,17 @@ class ExploreViewModel: ObservableObject {
         await performSearch(query: trimmed)
     }
 
+    func toggleStar(id: RepositoryModel.ID) {
+        if let idx = allRepositories.firstIndex(where: { $0.id == id }) {
+            allRepositories[idx].starred.toggle()
+        }
+    }
+
     private func performSearch(query: String) async {
         isLoading = true
         errorMessage = nil
         do {
             allRepositories = try await GitHubRepository.shared.searchRepositories(query: query)
-            print("✅ [ExploreViewModel] Loaded \(allRepositories.count) repositories")
         } catch {
             errorMessage = error.localizedDescription
         }

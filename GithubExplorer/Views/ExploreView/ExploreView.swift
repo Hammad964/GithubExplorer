@@ -59,7 +59,7 @@ struct ExploreView: View {
                                 ForEach(vm.repositories) { repo in
 
                                     NavigationLink(destination: RepositoryDetailView(repo: repo)) {
-                                        RepositoryCardView(repo: repo)
+                                        RepositoryCardView(repo: repo, onToggleStar: { vm.toggleStar(id: repo.id) })
                                     }
                                     .buttonStyle(.plain)
                                 }
