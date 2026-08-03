@@ -118,6 +118,6 @@ struct RepositoryDetailView: View {
 #Preview {
     let vm = ExploreViewModel()
     return NavigationStack {
-        RepositoryDetailView(vm: vm, repoID: UUID())
+        RepositoryDetailView(vm: vm, repoID: 0)
     }
 }

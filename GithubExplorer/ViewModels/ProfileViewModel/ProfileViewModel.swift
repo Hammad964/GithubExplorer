@@ -13,11 +13,11 @@ import Combine
 
 @MainActor
 class ProfileViewModel: ObservableObject {
-
+    
     @Published var user: GitHubUser?
     @Published var isLoading = false
     @Published var errorMessage: String?
-
+    
     func loadProfile(username: String, into exploreVM: ExploreViewModel) async {
         isLoading = true
         errorMessage = nil
@@ -30,15 +30,10 @@ class ProfileViewModel: ObservableObject {
         }
         isLoading = false
     }
-
+    
     private func merge(_ repos: [RepositoryModel], into exploreVM: ExploreViewModel) {
-        for repo in repos {
-            let alreadyExists = exploreVM.allRepositories.contains {
-                $0.owner == repo.owner && $0.name == repo.name
-            }
-            if !alreadyExists {
-                exploreVM.allRepositories.append(repo)
-            }
-        }
+        let existingIDs = Set(exploreVM.allRepositories.map { $0.id })
+        let newRepos = repos.filter { !existingIDs.contains($0.id) }
+        exploreVM.allRepositories.append(contentsOf: newRepos)
     }
 }

@@ -24,6 +24,7 @@ final class GitHubRepository {
     
     private func map(_ dto: RepositoryDTO) -> RepositoryModel {
         RepositoryModel(
+            id: dto.id,
             name: dto.name,
             owner: dto.owner.login,
             avatarURL: dto.owner.avatarUrl,

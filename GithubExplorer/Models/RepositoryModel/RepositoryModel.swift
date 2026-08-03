@@ -10,7 +10,7 @@ import SwiftUI
 
 struct RepositoryModel: Identifiable {
 
-    let id = UUID()
+    let id: Int
 
     let name: String
     let owner: String

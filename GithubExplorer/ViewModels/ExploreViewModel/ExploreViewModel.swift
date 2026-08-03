@@ -17,7 +17,10 @@ class ExploreViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    let languages = ["All", "Swift", "Kotlin", "TypeScript", "Python", "Go", "Rust"]
+    var languages: [String] {
+        let unique = Set(allRepositories.map { $0.language }).subtracting(["Unknown"])
+        return ["All"] + unique.sorted()
+    }
 
     var repositories: [RepositoryModel] {
         if selectedLanguage == "All" {
@@ -59,14 +62,8 @@ class ExploreViewModel: ObservableObject {
     }
     
     private func merge(_ freshResults: [RepositoryModel]) {
-        let preserved = allRepositories.filter { existing in
-            existing.starred && !freshResults.contains { $0.owner == existing.owner && $0.name == existing.name }
-        }
-
-        var merged = freshResults
-        for repo in preserved {
-            merged.append(repo)
-        }
-        allRepositories = merged
+        let freshIDs = Set(freshResults.map { $0.id })
+        let preserved = allRepositories.filter { $0.starred && !freshIDs.contains($0.id) }
+        allRepositories = freshResults + preserved
     }
 }

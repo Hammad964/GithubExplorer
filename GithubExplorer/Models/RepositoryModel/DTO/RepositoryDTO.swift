@@ -12,6 +12,7 @@ struct SearchResponse: Decodable {
 }
 
 struct RepositoryDTO: Decodable {
+    let id: Int
     let name: String
     let description: String?
     let language: String?
@@ -21,6 +22,7 @@ struct RepositoryDTO: Decodable {
     let owner: OwnerDTO
 
     enum CodingKeys: String, CodingKey {
+        case id
         case name
         case description
         case language
