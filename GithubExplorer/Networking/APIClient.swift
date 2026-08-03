@@ -69,4 +69,12 @@ final class APIClient {
     func fetchContributors(owner: String, repo: String) async throws -> [ContributorDTO] {
         try await fetch(.contributors(owner: owner, repo: repo))
     }
+    
+    func fetchUser(username: String) async throws -> UserDTO {
+        try await fetch(.user(username: username))
+    }
+
+    func fetchUserRepos(username: String) async throws -> [RepositoryDTO] {
+        try await fetch(.userRepos(username: username))
+    }
 }

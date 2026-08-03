@@ -14,7 +14,7 @@ struct ProfileHeaderView: View {
     var body: some View {
         VStack(spacing: 18) {
             
-            AvatarView(initials: user.initials)
+            AvatarView(avatarURL: user.avatarURL, initials: user.initials)
             
             VStack(spacing: 6) {
                 

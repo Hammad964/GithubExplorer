@@ -50,10 +50,23 @@ class ExploreViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            allRepositories = try await GitHubRepository.shared.searchRepositories(query: query)
+            let freshResults = try await GitHubRepository.shared.searchRepositories(query: query)
+            merge(freshResults)
         } catch {
             errorMessage = error.localizedDescription
         }
         isLoading = false
+    }
+    
+    private func merge(_ freshResults: [RepositoryModel]) {
+        let preserved = allRepositories.filter { existing in
+            existing.starred && !freshResults.contains { $0.owner == existing.owner && $0.name == existing.name }
+        }
+
+        var merged = freshResults
+        for repo in preserved {
+            merged.append(repo)
+        }
+        allRepositories = merged
     }
 }

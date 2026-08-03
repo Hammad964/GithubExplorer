@@ -26,7 +26,7 @@ struct RootView: View {
                     StarredView(vm: exploreVM)
 
                 case .profile:
-                    ProfileView()
+                    ProfileView(exploreVM: exploreVM)
                 }
             }
 

@@ -36,4 +36,24 @@ final class GitHubRepository {
             contributors: []
         )
     }
+    
+    func fetchProfile(username: String) async throws -> (user: GitHubUser, repos: [RepositoryModel]) {
+        async let userDTO = APIClient.shared.fetchUser(username: username)
+        async let repoDTOs = APIClient.shared.fetchUserRepos(username: username)
+
+        let (fetchedUser, fetchedRepos) = try await (userDTO, repoDTOs)
+
+        let user = GitHubUser(
+            name: fetchedUser.name ?? fetchedUser.login,
+            username: fetchedUser.login,
+            bio: fetchedUser.bio ?? "",
+            avatarURL: fetchedUser.avatarUrl,
+            repositories: fetchedUser.publicRepos,
+            followers: fetchedUser.followers,
+            following: fetchedUser.following
+        )
+
+        let repos = fetchedRepos.map(map)
+        return (user, repos)
+    }
 }

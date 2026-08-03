@@ -8,43 +8,37 @@
 import SwiftUI
 import Combine
 
+import SwiftUI
+import Combine
+
+@MainActor
 class ProfileViewModel: ObservableObject {
 
-    @Published var user = GitHubUser(
-        initials: "HA",
-        name: "Hammad Ahmed",
-        username: "hammad964",
-        bio: "iOS Developer · Swift, SwiftUI, MVVM",
-        repositories: 12,
-        followers: 34,
-        following: 28
-    )
+    @Published var user: GitHubUser?
+    @Published var isLoading = false
+    @Published var errorMessage: String?
 
-    @Published var repositories: [RepositoryModel] = [
-        RepositoryModel(
-            name: "hammad964/MyPortfolio",
-            owner: "gin-gonic",
-            avatarURL: "https://avatars.githubusercontent.com/u/60065998?s=60&v=4",
-            description: "Personal portfolio site rebuilt as a custom single-page site with Formspree contact integration.",
-            language: "TypeScript",
-            languageColor: .blue,
-            stars: "6",
-            forks: "1",
-            issues: "56",
-            contributors: ["appleboy", "javierprovecho", "thinkerou"]
-        ),
+    func loadProfile(username: String, into exploreVM: ExploreViewModel) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            let result = try await GitHubRepository.shared.fetchProfile(username: username)
+            user = result.user
+            merge(result.repos, into: exploreVM)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
 
-        RepositoryModel(
-            name: "hammad964/ExpenseTrackerSwiftUI",
-            owner: "gin-gonic",
-            avatarURL: "https://avatars.githubusercontent.com/u/60065998?s=60&v=4",
-            description: "SwiftUI + SwiftData expense tracker with category breakdown charts and CloudKit sync.",
-            language: "Swift",
-            languageColor: .red,
-            stars: "3",
-            forks: "0",
-            issues: "56",
-            contributors: ["appleboy", "javierprovecho", "thinkerou"]
-        )
-    ]
+    private func merge(_ repos: [RepositoryModel], into exploreVM: ExploreViewModel) {
+        for repo in repos {
+            let alreadyExists = exploreVM.allRepositories.contains {
+                $0.owner == repo.owner && $0.name == repo.name
+            }
+            if !alreadyExists {
+                exploreVM.allRepositories.append(repo)
+            }
+        }
+    }
 }

@@ -10,6 +10,8 @@ import Foundation
 enum Endpoint {
     case searchRepositories(query: String)
     case contributors(owner: String, repo: String)
+    case user(username: String)
+    case userRepos(username: String)
 
     private var baseURL: String { "https://api.github.com" }
 
@@ -26,6 +28,14 @@ enum Endpoint {
 
         case .contributors(let owner, let repo):
             return URL(string: "\(baseURL)/repos/\(owner)/\(repo)/contributors")
+
+        case .user(let username):
+            return URL(string: "\(baseURL)/users/\(username)")
+
+        case .userRepos(let username):
+            var components = URLComponents(string: "\(baseURL)/users/\(username)/repos")
+            components?.queryItems = [URLQueryItem(name: "sort", value: "updated")]
+            return components?.url
         }
     }
 }
